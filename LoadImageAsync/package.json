@@ -1,0 +1,15 @@
+{
+  "name": "net.battlehub.loadimageasync",
+  "version": "0.1.0",
+  "displayName": "Load Image Async",
+  "description": "Load Image Async",
+  "unity": "2019.4",
+  "keywords": [
+    "load image async"
+  ],
+  "author": {
+    "name": "Battlehub",
+    "email": "Battlehub@outlook.com",
+    "url": "http://www.battlehub.net"
+  }
+}
