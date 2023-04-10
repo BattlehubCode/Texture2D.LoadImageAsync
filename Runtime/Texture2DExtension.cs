@@ -1,4 +1,4 @@
-using System;
+ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -16,11 +16,11 @@ namespace Battlehub.Utils
 
     public static class Texture2DExtension
     {
-        [DllImport("LoadImage")]
-        private static extern ImageInfo GetInfo(string path);
+        [DllImport("Battlehub.LoadImage")]
+        private static extern ImageInfo Battlehub_LoadImage_GetInfo(string path);
 
-        [DllImport("LoadImage")]
-        private static extern void Load(string path, byte[] data, int channels, int mipLevels);
+        [DllImport("Battlehub.LoadImage")]
+        private static extern void Battlehub_LoadImage_Load(string path, byte[] data, int channels, int mipLevels);
 
         private static int CalculateMipmapArraySize(int width, int height, int channels, int mipmapLevels)
         {
@@ -38,20 +38,20 @@ namespace Battlehub.Utils
             return totalSize;
         }
 
-        public static async Task LoadImageAsync(this Texture2D texture, string path)
+        public static async Task LoadImageAsync(this Texture2D texture, string path, bool mipChain = true)
         {
             try
             {
-                ImageInfo info = GetInfo(path);
+                ImageInfo info = Battlehub_LoadImage_GetInfo(path);
 
                 TextureFormat format = info.channels == 4 ? TextureFormat.ARGB32 : TextureFormat.RGB24;
-                texture.Reinitialize(info.width, info.height, format, texture.mipmapCount > 1);
+                texture.Reinitialize(info.width, info.height, format, mipChain);
 
                 int mipmapCount = texture.mipmapCount;
                 int size = CalculateMipmapArraySize(info.width, info.height, info.channels, mipmapCount);
 
                 byte[] data = new byte[size];
-                await Task.Run(() => Load(path, data, info.channels, mipmapCount));
+                await Task.Run(() => Battlehub_LoadImage_Load(path, data, info.channels, mipmapCount));
 
                 texture.LoadRawTextureData(data);
                 texture.Apply(false);
