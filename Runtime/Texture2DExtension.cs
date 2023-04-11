@@ -16,7 +16,7 @@ namespace Battlehub.Utils
 
     public static class Texture2DExtension
     {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
         private const string LoadImage = "Battlehub.LoadImage";
 #elif UNITY_ANDROID
         private const string LoadImage = "Battlehub_LoadImage_Droid";
