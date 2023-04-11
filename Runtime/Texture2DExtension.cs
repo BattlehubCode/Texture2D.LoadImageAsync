@@ -16,10 +16,17 @@ namespace Battlehub.Utils
 
     public static class Texture2DExtension
     {
-        [DllImport("Battlehub.LoadImage")]
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+        private const string LoadImage = "Battlehub.LoadImage";
+#elif UNITY_ANDROID
+        private const string LoadImage = "Battlehub_LoadImage_Droid";
+#else 
+        private const string LoadImage = "__Internal";
+#endif
+        [DllImport(LoadImage)]
         private static extern ImageInfo Battlehub_LoadImage_GetInfo(string path);
 
-        [DllImport("Battlehub.LoadImage")]
+        [DllImport(LoadImage)]
         private static extern void Battlehub_LoadImage_Load(string path, byte[] data, int channels, int mipLevels);
 
         private static int CalculateMipmapArraySize(int width, int height, int channels, int mipmapLevels)
