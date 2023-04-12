@@ -20,10 +20,10 @@ namespace Battlehub.Utils
         private const string k_LoadImage = "Battlehub.LoadImage";
         private const CharSet k_charSet = CharSet.Unicode;
 #elif UNITY_ANDROID
-        private const string LoadImage = "Battlehub_LoadImage_Droid";
+        private const string k_LoadImage = "Battlehub_LoadImage_Droid";
         private const CharSet k_charSet = CharSet.Ansi;
 #else 
-        private const string LoadImage = "__Internal";
+        private const string k_LoadImage = "__Internal";
         private const CharSet k_charSet = CharSet.Ansi;
 #endif
         [DllImport(k_LoadImage, CharSet = k_charSet)]
