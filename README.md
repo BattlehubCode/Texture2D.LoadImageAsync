@@ -6,7 +6,7 @@
 using Battlehub.Utils;
 using UnityEngine;
 
-public class LoadImageAsnycTest : MonoBehaviour
+public class LoadImageAsyncSample : MonoBehaviour
 {
     [SerializeField]
     private string m_path;
