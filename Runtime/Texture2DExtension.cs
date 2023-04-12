@@ -17,16 +17,19 @@ namespace Battlehub.Utils
     public static class Texture2DExtension
     {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-        private const string LoadImage = "Battlehub.LoadImage";
+        private const string k_LoadImage = "Battlehub.LoadImage";
+        private const CharSet k_charSet = CharSet.Unicode;
 #elif UNITY_ANDROID
         private const string LoadImage = "Battlehub_LoadImage_Droid";
+        private const CharSet k_charSet = CharSet.Ansi;
 #else 
         private const string LoadImage = "__Internal";
+        private const CharSet k_charSet = CharSet.Ansi;
 #endif
-        [DllImport(LoadImage)]
-        private static extern ImageInfo Battlehub_LoadImage_GetInfo(string path);
+        [DllImport(k_LoadImage, CharSet = k_charSet)]
+        private static extern ImageInfo Battlehub_LoadImage_GetInfo( string path);
 
-        [DllImport(LoadImage)]
+        [DllImport(k_LoadImage, CharSet = k_charSet)]
         private static extern void Battlehub_LoadImage_Load(string path, byte[] data, int channels, int mipLevels);
 
         private static int CalculateMipmapArraySize(int width, int height, int channels, int mipmapLevels)
@@ -45,11 +48,15 @@ namespace Battlehub.Utils
             return totalSize;
         }
 
-        public static async Task LoadImageAsync(this Texture2D texture, string path, bool mipChain = true)
+        public static async Task<bool> LoadImageAsync(this Texture2D texture, string path, bool mipChain = true)
         {
             try
             {
                 ImageInfo info = Battlehub_LoadImage_GetInfo(path);
+                if(info.status != 1)
+                {
+                    return false;
+                }
 
                 TextureFormat format = info.channels == 4 ? TextureFormat.ARGB32 : TextureFormat.RGB24;
                 texture.Reinitialize(info.width, info.height, format, mipChain);
@@ -62,6 +69,8 @@ namespace Battlehub.Utils
 
                 texture.LoadRawTextureData(data);
                 texture.Apply(false);
+
+                return true;
             }
             catch (Exception e)
             {
