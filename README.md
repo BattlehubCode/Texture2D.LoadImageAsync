@@ -21,5 +21,5 @@ public class LoadImageAsnycTest : MonoBehaviour
 }
 ```
 
-# Plugin sources
+## Plugin source
 https://github.com/Battlehub0x/LoadImageAsyncPlugin
