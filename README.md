@@ -3,7 +3,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/Battlehub0x/Texture2D.LoadImageAsync)](https://github.com/Battlehub0x/Texture2D.LoadImageAsync/issues)
 [![GitHub license](https://img.shields.io/github/license/Battlehub0x/Texture2D.LoadImageAsync?label=license)](https://github.com/Battlehub0x/Texture2D.LoadImageAsync/blob/main/LICENSE)
 
-The Texture2D.LoadImageAsync package is an extension for loading images asynchronously in Unity. It improves performance and responsiveness by reducing the impact of image loading on the main thread. It supports various image formats, including JPEG, PNG. It uses this [plugin](https://github.com/Battlehub0x/LoadImageAsyncPlugin) build on top of stb_image.h, stb_image_resize.h and compiled for windows, macOS and Android.
+The Texture2D.LoadImageAsync package is an extension for loading images asynchronously in Unity. It improves performance and responsiveness by reducing the impact of image loading on the main thread. It supports various image formats, including JPEG, PNG. It uses this [plugin](https://github.com/Battlehub0x/LoadImageAsyncPlugin) built on top of stb_image.h, stb_image_resize.h and compiled for windows, macOS and Android.
 
 ## Installation
 
