@@ -1,4 +1,4 @@
-# LoadImageAsync
+# Texture2D.LoadImageAsync
 [![openupm](https://img.shields.io/npm/v/net.battlehub.loadimageasync?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/net.battlehub.loadimageasync/)
 [![GitHub issues](https://img.shields.io/github/issues/Battlehub0x/Texture2D.LoadImageAsync)](https://github.com/Battlehub0x/Texture2D.LoadImageAsync/issues)
 [![GitHub license](https://img.shields.io/github/license/Battlehub0x/Texture2D.LoadImageAsync?label=license)](https://github.com/Battlehub0x/Texture2D.LoadImageAsync/blob/main/LICENSE)
