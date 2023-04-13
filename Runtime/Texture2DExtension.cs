@@ -27,18 +27,24 @@ namespace Battlehub.Utils
         private const CharSet k_charSet = CharSet.Ansi;
 #endif
         [DllImport(k_LoadImage, CharSet = k_charSet)]
-        private static extern ImageInfo Battlehub_LoadImage_GetInfo( string path);
+        private static extern ImageInfo Battlehub_LoadImage_GetInfo(string path);
 
         [DllImport(k_LoadImage, CharSet = k_charSet)]
-        private static extern void Battlehub_LoadImage_Load(string path, byte[] data, int channels, int mipLevels);
+        private static extern void Battlehub_LoadImage_Load(string path, byte[] data, int channels, int mipmapCount);
 
-        private static int CalculateMipmapArraySize(int width, int height, int channels, int mipmapLevels)
+        [DllImport(k_LoadImage)]
+        private static extern ImageInfo Battlehub_LoadImage_Load_From_Memory(byte[] bytes, int size, bool mipChain, out IntPtr outBytes);
+
+        [DllImport(k_LoadImage)]
+        private static extern void Battlehub_LoadImage_Free_Memory(IntPtr bytes);
+
+        private static int CalculateMipmapArraySize(int width, int height, int channels, int mipmapCount)
         {
             int totalSize = 0;
             int currentWidth = width;
             int currentHeight = height;
 
-            for (int i = 0; i < mipmapLevels; i++)
+            for (int i = 0; i < mipmapCount; i++)
             {
                 totalSize += currentWidth * currentHeight * channels;
                 currentWidth = Mathf.Max(1, currentWidth / 2);
@@ -48,15 +54,56 @@ namespace Battlehub.Utils
             return totalSize;
         }
 
+        private static int CalculateMipmapCount(int width, int height)
+        {
+            int maxDimension = Mathf.Max(width, height);
+            int mipLevels = Mathf.FloorToInt(Mathf.Log(maxDimension, 2)) + 1;
+            return mipLevels;
+        }
+
         public static async Task<bool> LoadImageAsync(this Texture2D texture, string path, bool mipChain = true)
         {
+            ImageInfo info = Battlehub_LoadImage_GetInfo(path);
+            if (info.status != 1)
+            {
+                return false;
+            }
+
+            TextureFormat format = info.channels == 4 ? TextureFormat.RGBA32 : TextureFormat.RGB24;
+#if UNITY_2021_2_OR_NEWER
+                texture.Reinitialize(info.width, info.height, format, mipChain);
+#else
+            texture.Resize(info.width, info.height, format, mipChain);
+#endif
+
+            int mipmapCount = texture.mipmapCount;
+            int size = CalculateMipmapArraySize(info.width, info.height, info.channels, mipmapCount);
+
+            byte[] data = new byte[size];
+            await Task.Run(() => Battlehub_LoadImage_Load(path, data, info.channels, mipmapCount));
+
+            texture.LoadRawTextureData(data);
+            texture.Apply(false);
+
+            return true;
+        }
+
+        public static async Task<bool> LoadImageAsync(this Texture2D texture, byte[] data, bool mipChain = true)
+        {
+            IntPtr rawDataPtr = IntPtr.Zero;
+            ImageInfo info = await Task.Run(() => Battlehub_LoadImage_Load_From_Memory(data, data.Length, mipChain, out rawDataPtr));
+            if (info.status != 1)
+            {
+                return false;
+            }
+
             try
             {
-                ImageInfo info = Battlehub_LoadImage_GetInfo(path);
-                if(info.status != 1)
-                {
-                    return false;
-                }
+                int mipmapCount = CalculateMipmapCount(info.width, info.height);
+                int size = CalculateMipmapArraySize(info.width, info.height, info.channels, mipmapCount);
+
+                byte[] rawData = new byte[size];
+                Marshal.Copy(rawDataPtr, rawData, 0, size);
 
                 TextureFormat format = info.channels == 4 ? TextureFormat.RGBA32 : TextureFormat.RGB24;
 #if UNITY_2021_2_OR_NEWER
@@ -64,25 +111,15 @@ namespace Battlehub.Utils
 #else
                 texture.Resize(info.width, info.height, format, mipChain);
 #endif
-
-                int mipmapCount = texture.mipmapCount;
-                int size = CalculateMipmapArraySize(info.width, info.height, info.channels, mipmapCount);
-
-                byte[] data = new byte[size];
-                await Task.Run(() => Battlehub_LoadImage_Load(path, data, info.channels, mipmapCount));
-
-                texture.LoadRawTextureData(data);
+                texture.LoadRawTextureData(rawData);
                 texture.Apply(false);
 
                 return true;
             }
-            catch (Exception e)
+            finally
             {
-                Debug.LogException(e);
-                throw;
-            }
+                Battlehub_LoadImage_Free_Memory(rawDataPtr);
+            }   
         }
-
     }
-
 }
