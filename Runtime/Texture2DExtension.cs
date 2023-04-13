@@ -59,7 +59,11 @@ namespace Battlehub.Utils
                 }
 
                 TextureFormat format = info.channels == 4 ? TextureFormat.RGBA32 : TextureFormat.RGB24;
+#if UNITY_2021_2_OR_NEWER
                 texture.Reinitialize(info.width, info.height, format, mipChain);
+#else
+                texture.Resize(info.width, info.height, format, mipChain);
+#endif
 
                 int mipmapCount = texture.mipmapCount;
                 int size = CalculateMipmapArraySize(info.width, info.height, info.channels, mipmapCount);
