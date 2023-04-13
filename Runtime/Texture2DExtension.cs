@@ -41,8 +41,8 @@ namespace Battlehub.Utils
             for (int i = 0; i < mipmapLevels; i++)
             {
                 totalSize += currentWidth * currentHeight * channels;
-                currentWidth = currentWidth / 2;
-                currentHeight = currentHeight / 2;
+                currentWidth = Mathf.Max(1, currentWidth / 2);
+                currentHeight = Mathf.Max(1, currentHeight / 2);
             }
 
             return totalSize;
@@ -58,7 +58,7 @@ namespace Battlehub.Utils
                     return false;
                 }
 
-                TextureFormat format = info.channels == 4 ? TextureFormat.ARGB32 : TextureFormat.RGB24;
+                TextureFormat format = info.channels == 4 ? TextureFormat.RGBA32 : TextureFormat.RGB24;
                 texture.Reinitialize(info.width, info.height, format, mipChain);
 
                 int mipmapCount = texture.mipmapCount;
