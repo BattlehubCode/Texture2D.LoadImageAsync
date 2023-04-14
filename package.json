@@ -1,6 +1,6 @@
 {
   "name": "net.battlehub.loadimageasync",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "displayName": "Texture2D.LoadImageAsync",
   "description": "The Texture2D.LoadImageAsync package is an extension for loading images asynchronously in Unity. \nIt improves performance and responsiveness by reducing the impact of image loading on the main thread. \nIt supports various image formats, including JPEG, PNG. \nIt uses this plugin built on top of stb_image.h, stb_image_resize.h and compiled for Windows, macOS and Android.",
   "unity": "2020.3",
