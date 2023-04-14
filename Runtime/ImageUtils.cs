@@ -14,7 +14,7 @@ namespace Battlehub.Utils
         public int channels;
     }
 
-    public static class Texture2DExtension
+    public static class ImageUtils
     {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
         private const string k_LoadImage = "Battlehub.LoadImage";
@@ -28,7 +28,6 @@ namespace Battlehub.Utils
 #endif
         [DllImport(k_LoadImage, CharSet = k_charSet)]
         private static extern ImageInfo Battlehub_LoadImage_GetInfo(string path);
-
 
         [DllImport(k_LoadImage, CharSet = k_charSet)]
         private static extern void Battlehub_LoadImage_Load(string path, byte[] data, int channels = 0, int mipmapCount = 1, int width = 0, int height = 0);
@@ -60,6 +59,12 @@ namespace Battlehub.Utils
             int maxDimension = Mathf.Max(width, height);
             int mipLevels = Mathf.FloorToInt(Mathf.Log(maxDimension, 2)) + 1;
             return mipLevels;
+        }
+
+        public static Vector2Int GetImageSize(string path)
+        {
+            ImageInfo info = Battlehub_LoadImage_GetInfo(path);
+            return new Vector2Int(info.width, info.height);
         }
 
         public static async Task<bool> LoadImageAsync(this Texture2D texture, string path, bool mipChain = true, int width = 0, int height = 0)
