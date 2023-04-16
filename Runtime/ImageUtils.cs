@@ -116,7 +116,7 @@ namespace Battlehub.Utils
 
             try
             {
-                int mipmapCount = CalculateMipmapCount(info.width, info.height);
+                int mipmapCount = mipChain ? CalculateMipmapCount(info.width, info.height) : 1;
                 int size = CalculateMipmapArraySize(info.width, info.height, info.channels, mipmapCount);
 
                 byte[] rawData = new byte[size];
