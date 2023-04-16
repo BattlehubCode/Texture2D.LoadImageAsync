@@ -67,7 +67,7 @@ namespace Battlehub.Utils
             return new Vector2Int(info.width, info.height);
         }
 
-        public static async Task<bool> LoadImageAsync(this Texture2D texture, string path, bool mipChain = true, int width = 0, int height = 0)
+        public static async Task<bool> LoadImageAsync(this Texture2D texture, string path, bool mipChain = true, int desiredWidth = 0, int desiredHeight = 0)
         {
             ImageInfo info = Battlehub_LoadImage_GetInfo(path);
             if (info.status != 1)
@@ -75,14 +75,16 @@ namespace Battlehub.Utils
                 return false;
             }
 
-            if (width <= 0)
+            int width = info.width;
+            if (desiredWidth > 0)
             {
-                width = info.width;
+                width = desiredWidth;
             }
 
-            if (height <= 0)
+            int height = info.height;
+            if (desiredHeight > 0)
             {
-                height = info.height;
+                height = desiredHeight;
             }
 
             TextureFormat format = info.channels == 4 ? TextureFormat.RGBA32 : TextureFormat.RGB24;
@@ -95,7 +97,7 @@ namespace Battlehub.Utils
             int size = CalculateMipmapArraySize(width, height, info.channels, mipmapCount);
 
             byte[] data = new byte[size];
-            await Task.Run(() => Battlehub_LoadImage_Load(path, data, info.channels, mipmapCount, width, height));
+            await Task.Run(() => Battlehub_LoadImage_Load(path, data, info.channels, mipmapCount, desiredWidth, desiredHeight));
 
             texture.LoadRawTextureData(data);
             texture.Apply(false);
